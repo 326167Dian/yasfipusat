@@ -61,7 +61,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
 
     //cek apakah barang sudah ada
     $cekdetail = run_query_or_fail($conn, "SELECT id_barang, kd_barang, kd_trkasir, id_dtrkasir, qty_dtrkasir 
-    FROM trkasir_detail WHERE kd_barang='$kd_barang' AND kd_trkasir='$kd_trkasir' and no_batch='$no_batch'");
+    FROM dropping_detail WHERE kd_barang='$kd_barang' AND kd_trkasir='$kd_trkasir' and no_batch='$no_batch'");
 
     $ketemucekdetail = mysqli_num_rows($cekdetail);
     $rcek = mysqli_fetch_array($cekdetail);
@@ -72,7 +72,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
         $ttlqty = $qtylama + $qty_dtrkasir;
         $ttlharga = $ttlqty * $hrgdisc;
 
-        run_query_or_fail($conn, "UPDATE trkasir_detail SET qty_dtrkasir = '$ttlqty',
+        run_query_or_fail($conn, "UPDATE dropping_detail SET qty_dtrkasir = '$ttlqty',
 										hrgjual_dtrkasir = '$hrgjual_dtrkasir',
 										hrgttl_dtrkasir = '$ttlharga',
                                         komisi = '$komisi'
@@ -96,7 +96,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
         //update stok
         //cek tambah stok
         $tambahstok = run_query_or_fail($conn, "select id_dtrkasir, kd_trkasir, qty_dtrkasir 
-        from trkasir_detail where kd_trkasir='$kd_trkasir' and kd_barang='$kd_barang'");
+        from dropping_detail where kd_trkasir='$kd_trkasir' and kd_barang='$kd_barang'");
         $ketemutambahstok = mysqli_fetch_array($tambahstok);
         // if($angka==$ttlqty) {
         run_query_or_fail($conn, "UPDATE barang SET 
@@ -124,7 +124,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
             $ttlharga = $qty_dtrkasir * $hrgdisc;
     
     
-            run_query_or_fail($conn, "INSERT INTO trkasir_detail(kd_trkasir,
+            run_query_or_fail($conn, "INSERT INTO dropping_detail(kd_trkasir,
     										id_barang,
     										kd_barang,
     										nmbrg_dtrkasir,
@@ -182,7 +182,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
             }
     
             //cek transaksi sukses
-            $cekmasuk = run_query_or_fail($conn, "select id_dtrkasir, kd_trkasir from trkasir_detail 
+            $cekmasuk = run_query_or_fail($conn, "select id_dtrkasir, kd_trkasir from dropping_detail 
             where kd_trkasir='$kd_trkasir'");
             $ketemucekmasuk = mysqli_fetch_array($cekmasuk);
             if ($ketemucekmasuk > 0) {
@@ -211,7 +211,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
     }
 } else {
     //
-    $cekdetail = run_query_or_fail($conn, "SELECT * FROM trkasir_detail 
+    $cekdetail = run_query_or_fail($conn, "SELECT * FROM dropping_detail 
     WHERE id_dtrkasir='$id_dtrkasir'");
     $rcek = mysqli_fetch_array($cekdetail);
     $id_dtrkasir = $rcek['id_dtrkasir'];
@@ -219,7 +219,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
     $qtybaru = $qtylama + $qty_dtrkasir;
     $ttlharga = $qtybaru * $hrgjual_dtrkasir;
 
-    run_query_or_fail($conn, "UPDATE trkasir_detail SET qty_dtrkasir = '$qtybaru',
+    run_query_or_fail($conn, "UPDATE dropping_detail SET qty_dtrkasir = '$qtybaru',
 										hrgjual_dtrkasir = '$hrgjual_dtrkasir',
 										hrgttl_dtrkasir = '$ttlharga'
 										WHERE id_dtrkasir = '$id_dtrkasir'");
@@ -242,7 +242,7 @@ if ($id_dtrkasir == "" || $id_dtrkasir == null) {
                       
     //update stok
     //cek untuk update
-    $cekmasuk2 = run_query_or_fail($conn, "SELECT * FROM trkasir_detail 
+    $cekmasuk2 = run_query_or_fail($conn, "SELECT * FROM dropping_detail 
     WHERE id_dtrkasir='$id_dtrkasir'");
     $ceklagi = mysqli_fetch_array($cekmasuk2);
     // if($ceklagi == $qtybaru) {

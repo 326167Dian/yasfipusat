@@ -22,11 +22,11 @@ else {
         exit('Kode transaksi dropping tidak ditemukan.');
     }
 
-    $dt = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT trkasir.*, carabayar.nm_carabayar, trdropping.kd_trdropping
-        FROM trkasir
-        LEFT JOIN carabayar ON trkasir.id_carabayar = carabayar.id_carabayar
-        LEFT JOIN trdropping ON trdropping.kd_trkasir = trkasir.kd_trkasir
-        WHERE trkasir.kd_trkasir='$kd_trkasir'
+    $dt = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT dropping.*, carabayar.nm_carabayar, trdropping.kd_trdropping
+        FROM dropping
+        LEFT JOIN carabayar ON dropping.id_carabayar = carabayar.id_carabayar
+        LEFT JOIN trdropping ON trdropping.kd_trkasir = dropping.kd_trkasir
+        WHERE dropping.kd_trkasir='$kd_trkasir'
         LIMIT 1");
     $r1 = mysqli_fetch_array($dt);
 
@@ -37,7 +37,12 @@ else {
     $niltransaksi = isset($r1['ttl_trkasir']) ? (float) $r1['ttl_trkasir'] : 0;
     $no_faktur = !empty($r1['kd_trdropping']) ? $r1['kd_trdropping'] : $r1['kd_trkasir'];
 
-    $jumlahdetail = mysqli_num_rows(mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir_detail WHERE kd_trkasir='$kd_trkasir'"));
+    $detailTable = 'dropping_detail';
+    $jumlahdetail = mysqli_num_rows(mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM dropping_detail WHERE kd_trkasir='$kd_trkasir'"));
+    if ($jumlahdetail <= 0) {
+        $detailTable = 'trkasir_detail';
+        $jumlahdetail = mysqli_num_rows(mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir_detail WHERE kd_trkasir='$kd_trkasir'"));
+    }
 
 // $ukuran1 = 14.7; //setingan kertas
 // $ukuran2 = 5.4; //garis akhir tabel
@@ -158,12 +163,15 @@ else {
     $pdf->SetFont('Times', '', 9);
 
     $no = 1;
-    $query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir_detail WHERE kd_trkasir='$kd_trkasir'
+    $query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM $detailTable WHERE kd_trkasir='$kd_trkasir'
 	ORDER BY nmbrg_dtrkasir ASC");
 
+    $st = array();
+    $gt = 0;
+    $subtotal = format_rupiah(0);
     $garis = 6.1;
     while ($r2 = mysqli_fetch_array($query)) {
-        $st[] = $r2['hrgttl_dtrkasir'];
+        $st[] = (float) $r2['hrgttl_dtrkasir'];
         $gt = array_sum($st);
         // $disc = (($gt-$r1['ttl_tr5kasir'])/$gt)*100;
         $disc = format_rupiah($r2['disc']);

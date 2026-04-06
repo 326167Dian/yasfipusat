@@ -230,14 +230,10 @@ elseif ($_GET['module'] == 'cekdarah') {
 
 // Dropping Barang
 } elseif ($_GET['module'] == 'dropping') {
-    $act_dropping = isset($_GET['act']) ? $_GET['act'] : '';
-
-    if ($act_dropping == 'tambah' || $act_dropping == 'ubah') {
-        include "modul/mod_trkasir/trkasir.php";
-    } else {
+    
         include "modul/mod_dropping/dropping_barang.php";
     }
-}
+
 
 // $getkdon = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT kd_trkasir FROM kdtk WHERE id_admin = '$_SESSION[idadmin]' AND stt_kdtk ='ON' ORDER BY id_kdtk DESC");
 // $kdon = mysqli_fetch_array($getkdon);

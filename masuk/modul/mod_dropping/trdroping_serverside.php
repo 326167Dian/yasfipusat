@@ -20,7 +20,7 @@ if ($_GET['action'] == "table_data") {
         10 => 'id_trkasir',
         
     );
-    $aksi="modul/mod_trkasir/aksi_trkasir.php";
+    $aksi="modul/mod_dropping/aksi_dropping.php";
     
     $querycount = $db->query("SELECT count(id_trdropping ) as jumlah FROM trdropping");
     $datacount = $querycount->fetch_array();
@@ -36,13 +36,13 @@ if ($_GET['action'] == "table_data") {
 
     if (empty($_POST['search']['value'])) {
         $query = $db->query("SELECT * FROM trdropping 
-            JOIN trkasir a ON a.kd_trkasir = trdropping.kd_trkasir
+            JOIN dropping a ON a.kd_trkasir = trdropping.kd_trkasir
             JOIN carabayar b ON (a.id_carabayar=b.id_carabayar)
             ORDER BY trdropping.id_trdropping DESC LIMIT $limit OFFSET $start");
     } else {
         $search = $_POST['search']['value'];
         $query = $db->query("SELECT * FROM trdropping
-            JOIN trkasir a ON a.kd_trkasir = trdropping.kd_trkasir
+            JOIN dropping a ON a.kd_trkasir = trdropping.kd_trkasir
             JOIN carabayar b ON a.id_carabayar = b.id_carabayar
             WHERE   a.kd_trkasir LIKE '%$search%'
                     OR trdropping.kd_trdropping LIKE '%$search%'
@@ -58,7 +58,7 @@ if ($_GET['action'] == "table_data") {
 
         $querycount = $db->query("SELECT count(id_trdropping) as jumlah 
             FROM trdropping 
-            JOIN trkasir a ON a.kd_trkasir = trdropping.kd_trkasir
+            JOIN dropping a ON a.kd_trkasir = trdropping.kd_trkasir
             JOIN carabayar b ON a.id_carabayar = b.id_carabayar
             WHERE   a.kd_trkasir LIKE '%$search%'
                     OR trdropping.kd_trdropping LIKE '%$search%'
