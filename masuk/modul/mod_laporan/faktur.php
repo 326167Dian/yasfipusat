@@ -151,7 +151,9 @@ else {
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', 'B', 9);
     $pdf->Cell(1, 0.4, 'No.', 0, 0, 'C');
-    $pdf->Cell(10, 0.4, 'Nama Barang', 0, 0, 'C');
+    $pdf->Cell(6, 0.4, 'Nama Barang', 0, 0, 'C');
+    $pdf->Cell(2, 0.4, 'Batch', 0, 0, 'C');
+    $pdf->Cell(2, 0.4, 'ED', 0, 0, 'C');
     $pdf->Cell(2, 0.4, 'Sat', 0, 0, 'C');
     $pdf->Cell(1, 0.4, 'Qty', 0, 0, 'C');
     $pdf->Cell(2, 0.4, 'Harga', 0, 0, 'R');
@@ -163,7 +165,7 @@ else {
     $pdf->SetFont('Times', '', 9);
 
     $no = 1;
-    $query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM $detailTable WHERE kd_trkasir='$kd_trkasir'
+    $query = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM dropping_detail WHERE kd_trkasir='$kd_trkasir'
 	ORDER BY nmbrg_dtrkasir ASC");
 
     $st = array();
@@ -185,16 +187,20 @@ else {
 
         if ($text3 > 60) {
             $pdf->Cell(1, 0.4, $no . '.', 0, 0, 'C');
-            $pdf->Cell(10, 0.4, $text1, 0, 0, 'L');
-            $pdf->Cell(2, 0.4, $r2['sat_dtrkasir'], 0, 0, 'R');
-            $pdf->Cell(1, 0.4, $r2['qty_dtrkasir'], 0, 0, 'L');
+            $pdf->Cell(6, 0.4, $text1, 0, 0, 'L');
+            $pdf->Cell(2, 0.4, $r2['no_batch'], 0, 0, 'C');
+            $pdf->Cell(2, 0.4, $r2['exp_date'], 0, 0, 'C');
+            $pdf->Cell(2, 0.4, $r2['sat_dtrkasir'], 0, 0, 'C');
+            $pdf->Cell(1, 0.4, $r2['qty_dtrkasir'], 0, 0, 'C');
             $pdf->Cell(2, 0.4, format_rupiah($r2['hrgjual_dtrkasir']), 0, 0, 'R');
             $pdf->Cell(2, 0.4, $disc, 0, 0, 'C');
             $pdf->Cell(2, 0.4, format_rupiah($r2['hrgttl_dtrkasir']), 0, 1, 'R');
 
             $pdf->SetX(0.6);
             $pdf->Cell(1, 0.4, '', 0, 0, 'C');
-            $pdf->Cell(10, 0.4, $text2, 0, 0, 'L');
+            $pdf->Cell(6, 0.4, $text2, 0, 0, 'L');
+            $pdf->Cell(2, 0.4, '', 0, 0, 'L');
+            $pdf->Cell(2, 0.4, '', 0, 0, 'L');
             $pdf->Cell(2, 0.4, '', 0, 0, 'R');
             $pdf->Cell(1, 0.4, '', 0, 0, 'L');
             $pdf->Cell(2, 0.4, '', 0, 0, 'R');
@@ -204,7 +210,9 @@ else {
             $garis = $garis + 1.2;
         } else {
             $pdf->Cell(1, 0.4, $no . '.', 0, 0, 'C');
-            $pdf->Cell(10, 0.4, $r2['nmbrg_dtrkasir'], 0, 0, 'L');
+            $pdf->Cell(6, 0.4, $r2['nmbrg_dtrkasir'], 0, 0, 'L');
+            $pdf->Cell(2, 0.4, $r2['no_batch'], 0, 0, 'C');
+            $pdf->Cell(2, 0.4, $r2['exp_date'], 0, 0, 'C');
             $pdf->Cell(2, 0.4, $r2['sat_dtrkasir'], 0, 0, 'C');
             $pdf->Cell(1, 0.4, $r2['qty_dtrkasir'], 0, 0, 'C');
             $pdf->Cell(2, 0.4, format_rupiah($r2['hrgjual_dtrkasir']), 0, 0, 'R');
