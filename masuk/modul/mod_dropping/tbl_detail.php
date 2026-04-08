@@ -139,6 +139,10 @@ color: white;
 									<label class='col-sm-6 control-label'>TOTAL</label>        		
 									 <div class='col-sm-6'>
 										<input type='text' name='ttl_trkasir' id='ttl_trkasir' value='$grandnya' class='form-control input-validation-error' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off'>
+										<input type='hidden' name='diskon' id='diskon' value='0'>
+										<input type='hidden' name='diskon2' id='diskon2' value='0'>
+										<input type='hidden' name='dp_bayar' id='dp_bayar' value='0'>
+										<input type='hidden' name='sisa_bayar' id='sisa_bayar' value='0'>
 									 </div>
 								</div>
 								

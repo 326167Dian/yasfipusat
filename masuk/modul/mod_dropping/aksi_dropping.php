@@ -13,7 +13,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 	
 	$conn = $GLOBALS["___mysqli_ston"];
 	$conn2 = $GLOBALS["___mysqli_ston2"];
-	$logFile = __DIR__ . '/aksi_trkasir_error.log';
+	$logFile = __DIR__ . '/aksi_dropping_error.log';
 
 	function write_aksi_trkasir_log($logFile, $message)
 	{
@@ -46,11 +46,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 				throw new Exception('Data dropping untuk sinkronisasi tidak ditemukan');
 			}
 
-			run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM dropping_detail WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
-			run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM trbmasuk_detail WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
-			run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM kartu_stok WHERE kode_transaksi = '$kdTrdroppingTarget'");
-			run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM dropping WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
-			run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM trbmasuk WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
+			delete_dropping_from_yasfi2($connTarget, $kdTrdropping);
 			
 			$setheader = run_query_or_fail_aksi_trkasir($connSource, "SELECT satu FROM setheader");
             $head = mysqli_fetch_assoc($setheader);
@@ -191,6 +187,48 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			throw $e;
 		}
 	}
+
+	function find_dropping_header_for_delete($conn, $idTrkasir, $kdTrdropping = '')
+	{
+		$idTrkasirSafe = mysqli_real_escape_string($conn, $idTrkasir);
+		$kdTrdroppingSafe = mysqli_real_escape_string($conn, $kdTrdropping);
+		$whereParts = array();
+
+		if ($idTrkasirSafe !== '') {
+			$whereParts[] = "d.id_trkasir = '$idTrkasirSafe'";
+		}
+
+		if ($kdTrdroppingSafe !== '') {
+			$whereParts[] = "t.kd_trdropping = '$kdTrdroppingSafe'";
+		}
+
+		if (empty($whereParts)) {
+			return null;
+		}
+
+		$result = run_query_or_fail_aksi_trkasir($conn, "SELECT d.*, t.kd_trdropping
+			FROM dropping d
+			LEFT JOIN trdropping t ON t.kd_trkasir = d.kd_trkasir
+			WHERE " . implode(' OR ', $whereParts) . "
+			ORDER BY d.id_trkasir DESC
+			LIMIT 1");
+
+		return mysqli_fetch_assoc($result);
+	}
+
+	function delete_dropping_from_yasfi2($connTarget, $kdTrdropping)
+	{
+		if ($kdTrdropping == '') {
+			return;
+		}
+
+		$kdTrdroppingTarget = mysqli_real_escape_string($connTarget, $kdTrdropping);
+		run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM dropping_detail WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
+		run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM trbmasuk_detail WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
+		run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM kartu_stok WHERE kode_transaksi = '$kdTrdroppingTarget'");
+		run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM dropping WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
+		run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM trbmasuk WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
+	}
 	$jenistx = $db->query("select * from dropping_detail where kd_trkasir='$_POST[kd_trkasir]' group by kd_trkasir ");
 	$jnstx = $jenistx->fetch_array();
 	
@@ -306,6 +344,11 @@ try {
                 }
     		
     		} else {
+                write_aksi_trkasir_log(
+                    $logFile,
+                    'Insert dropping gagal | kd_trkasir=' . $_POST['kd_trkasir'] .
+                    ' | error=' . mysqli_error($conn)
+                );
     			$data['message'] = 'failed';
     			echo json_encode($data);
     		}
@@ -385,30 +428,37 @@ try {
 		if ($_SESSION['level'] != 'pemilik') {
 			echo "<script type='text/javascript'>window.location='../../media_admin.php?module=" . $module . "'</script>";
 		} else {
-			$id_trkasir = $_GET['id'];
+			$id_trkasir = isset($_GET['id']) ? $_GET['id'] : '';
 			$kd_trdropping = isset($_GET['droping']) ? $_GET['droping'] : '';
-			if ($kd_trdropping != '') {
+			$r1 = find_dropping_header_for_delete($conn, $id_trkasir, $kd_trdropping);
+
+			if ($r1 && $kd_trdropping == '' && !empty($r1['kd_trdropping'])) {
+				$kd_trdropping = $r1['kd_trdropping'];
+			}
+
+			$useConn2 = ($kd_trdropping != '');
+			if ($useConn2) {
 				mysqli_begin_transaction($conn2);
 			}
 			mysqli_begin_transaction($conn);
 
 			try {
-				if ($kd_trdropping != '') {
-					run_query_or_fail_aksi_trkasir($conn, "DELETE FROM trdropping WHERE kd_trdropping = '$kd_trdropping'");
-					run_query_or_fail_aksi_trkasir($conn2, "DELETE FROM dropping_detail WHERE kd_trbmasuk = '$kd_trdropping'");
-					run_query_or_fail_aksi_trkasir($conn2, "DELETE FROM trbmasuk_detail WHERE kd_trbmasuk = '$kd_trdropping'");
-					run_query_or_fail_aksi_trkasir($conn2, "DELETE FROM kartu_stok WHERE kode_transaksi = '$kd_trdropping'");
-					run_query_or_fail_aksi_trkasir($conn2, "DELETE FROM dropping WHERE kd_trbmasuk = '$kd_trdropping'");
-					run_query_or_fail_aksi_trkasir($conn2, "DELETE FROM trbmasuk WHERE kd_trbmasuk = '$kd_trdropping'");
-				}
-				$ambildatainduk = run_query_or_fail_aksi_trkasir($conn, "SELECT * FROM dropping WHERE id_trkasir='$id_trkasir'");
-				$r1 = mysqli_fetch_array($ambildatainduk);
 				if (!$r1) {
-					throw new Exception('Data trkasir tidak ditemukan');
+					throw new Exception('Data dropping tidak ditemukan');
 				}
 
 				$kd_trkasir = $r1['kd_trkasir'];
-				$ambildatadetail = run_query_or_fail_aksi_trkasir($conn, "SELECT * FROM dropping_detail WHERE kd_trkasir='$kd_trkasir'");
+				$kd_trkasir_safe = mysqli_real_escape_string($conn, $kd_trkasir);
+
+				if ($kd_trdropping != '') {
+					$kd_trdropping_safe = mysqli_real_escape_string($conn, $kd_trdropping);
+					run_query_or_fail_aksi_trkasir($conn, "DELETE FROM trdropping WHERE kd_trdropping = '$kd_trdropping_safe' OR kd_trkasir = '$kd_trkasir_safe'");
+					delete_dropping_from_yasfi2($conn2, $kd_trdropping);
+				} else {
+					run_query_or_fail_aksi_trkasir($conn, "DELETE FROM trdropping WHERE kd_trkasir = '$kd_trkasir_safe'");
+				}
+
+				$ambildatadetail = run_query_or_fail_aksi_trkasir($conn, "SELECT * FROM dropping_detail WHERE kd_trkasir='$kd_trkasir_safe'");
 				while ($r = mysqli_fetch_array($ambildatadetail)) {
 
 					$id_dtrkasir = $r['id_dtrkasir'];
@@ -428,10 +478,10 @@ try {
 					run_query_or_fail_aksi_trkasir($conn, "DELETE FROM batch WHERE kd_transaksi = '$r[kd_trkasir]' AND no_batch='$r[no_batch]' AND kd_barang='$r[kd_barang]' AND status = 'keluar'");
 				}
 
-				run_query_or_fail_aksi_trkasir($conn, "DELETE FROM dropping WHERE id_trkasir = '$id_trkasir'");
-				run_query_or_fail_aksi_trkasir($conn, "DELETE FROM kartu_stok WHERE kode_transaksi = '$kd_trkasir'");
+				run_query_or_fail_aksi_trkasir($conn, "DELETE FROM dropping WHERE id_trkasir = '$id_trkasir' OR kd_trkasir = '$kd_trkasir_safe'");
+				run_query_or_fail_aksi_trkasir($conn, "DELETE FROM kartu_stok WHERE kode_transaksi = '$kd_trkasir_safe'");
 				mysqli_commit($conn);
-				if ($kd_trdropping != '') {
+				if ($useConn2) {
 					mysqli_commit($conn2);
 				}
 				
@@ -444,13 +494,14 @@ try {
 				}
 			} catch (Exception $e) {
 				mysqli_rollback($conn);
-				if ($kd_trdropping != '') {
+				if ($useConn2) {
 					mysqli_rollback($conn2);
 				}
 				write_aksi_trkasir_log(
 					$logFile,
 					'Hapus trkasir gagal | id_trkasir=' . $id_trkasir .
 					' | kd_trkasir=' . (isset($kd_trkasir) ? $kd_trkasir : '-') .
+					' | kd_trdropping=' . ($kd_trdropping != '' ? $kd_trdropping : '-') .
 					' | detail=' . $e->getMessage()
 				);
 				echo "<script type='text/javascript'>alert('Gagal menghapus data !');window.location='../../media_admin.php?module=" . $module . "'</script>";

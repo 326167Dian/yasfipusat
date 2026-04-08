@@ -968,33 +968,34 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
     function simpan_transaksi() {
 
-        var id_trkasir = document.getElementById('id_trkasir').value;
-        var kd_trkasir = document.getElementById('kd_trkasir').value;
-        var petugas = document.getElementById('petugas').value;
-        var shift = document.getElementById('shift').value;
-        var tgl_trkasir = document.getElementById('tgl_trkasir').value;
-        var nm_pelanggan = document.getElementById('nm_pelanggan').value;
-        var tlp_pelanggan = document.getElementById('tlp_pelanggan').value;
-        var alamat_pelanggan = document.getElementById('alamat_pelanggan').value;
-        var kodetx = document.getElementById('kodetx').value;
-        var ttl_trkasir = document.getElementById('ttl_trkasir').value;
-        var diskon2 = document.getElementById('diskon2').value;
-        var dp_bayar = document.getElementById('dp_bayar').value;
-        var sisa_bayar = document.getElementById('sisa_bayar').value;
-        var ket_trkasir = document.getElementById('ket_trkasir').value;
-        var stt_aksi = document.getElementById('stt_aksi').value;
-        var id_carabayar = document.getElementById('id_carabayar').value;
+        function getValueOrDefault(id, defaultValue) {
+            var el = document.getElementById(id);
+            return el ? el.value : defaultValue;
+        }
+
+        var id_trkasir = getValueOrDefault('id_trkasir', '0');
+        var kd_trkasir = getValueOrDefault('kd_trkasir', '');
+        var petugas = getValueOrDefault('petugas', '');
+        var shift = getValueOrDefault('shift', '');
+        var tgl_trkasir = getValueOrDefault('tgl_trkasir', '');
+        var nm_pelanggan = getValueOrDefault('nm_pelanggan', '');
+        var tlp_pelanggan = getValueOrDefault('tlp_pelanggan', '');
+        var alamat_pelanggan = getValueOrDefault('alamat_pelanggan', '');
+        var kodetx = getValueOrDefault('kodetx', '');
+        var ttl_trkasir = getValueOrDefault('ttl_trkasir', '0');
+        var diskon2 = getValueOrDefault('diskon2', '0');
+        var dp_bayar = getValueOrDefault('dp_bayar', '0');
+        var sisa_bayar = getValueOrDefault('sisa_bayar', '0');
+        var ket_trkasir = getValueOrDefault('ket_trkasir', '');
+        var stt_aksi = getValueOrDefault('stt_aksi', 'input_trkasir');
+        var id_carabayar = getValueOrDefault('id_carabayar', '4');
 
 
-        var ttl_trkasir1 = ttl_trkasir.replace(".", "");
-        var dp_bayar1 = dp_bayar.replace(".", "");
-        var sisa_bayar1 = sisa_bayar.replace(".", "");
+        var ttl_trkasir1x = ttl_trkasir.toString().replace(/\./g, '');
+        var dp_bayar1x = dp_bayar.toString().replace(/\./g, '');
+        var sisa_bayar1x = sisa_bayar.toString().replace(/\./g, '');
 
-        var ttl_trkasir1x = ttl_trkasir1.replace(".", "");
-        var dp_bayar1x = dp_bayar1.replace(".", "");
-        var sisa_bayar1x = sisa_bayar1.replace(".", "");
-
-        var trdroping = document.getElementById('trdroping').value;
+        var trdroping = getValueOrDefault('trdroping', '');
         
        
 
