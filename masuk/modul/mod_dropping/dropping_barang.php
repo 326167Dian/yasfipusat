@@ -18,7 +18,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
     switch ($act) {
         case "tambah":
         case "ubah":
-            include __DIR__ . "/../mod_trkasir/trkasir.php";
+            include __DIR__ . "/trkasir.php";
             break;
 
         // Tampil Penjualan

@@ -7,8 +7,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
     echo "<div class='error msg'>Untuk mengakses Modul anda harus login.</div>";
 } else {
 
-    $aksi = "modul/mod_trkasir/aksi_trkasir.php";
-    $aksi_trkasir = "masuk/modul/mod_trkasir/aksi_trkasir.php";
+    $aksi = "modul/mod_dropping/aksi_dropping.php";
+    $aksi_trkasir = "masuk/modul/mod_dropping/aksi_dropping.php";
     $trdroping = isset($_GET['droping'])? $_GET['droping'] : '';
     
     switch ($_GET['act']) {
@@ -634,11 +634,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
 
         case "ubah":
-            $ubah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir 
-	WHERE trkasir.id_trkasir='$_GET[id]'");
+            $ubah = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM dropping 
+	WHERE dropping.id_trkasir='$_GET[id]'");
             $re = mysqli_fetch_array($ubah);
             $shift = $re['shift'];
             $petugas = $_SESSION['namalengkap'];
+            $tampil_jenisobat = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM jenis_obat ORDER BY idjenis ");
 
             $admin = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM komisi_pegawai 
 	WHERE kd_trkasir='$re[kd_trkasir]'");
@@ -647,7 +648,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             echo "
 		  <div class='box box-primary box-solid table-responsive'>
 				<div class='box-header with-border'>
-					<h3 class='box-title'>UBAH PENJUALAN</h3>
+					<h3 class='box-title'>UBAH DROPPING</h3>
 					<div class='box-tools pull-right'>
 						<button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
                     </div><!-- /.box-tools -->
@@ -1761,7 +1762,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             $.ajax({
 
                 type: 'post',
-                url: "modul/mod_trkasir/simpandetail_trkasir.php",
+                url: "modul/mod_dropping/simpandetail_trkasir.php",
                 data: {
                     'kd_trkasir': kd_trkasir,
                     'id_barang': id_barang,
@@ -1811,7 +1812,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
         $.ajax({
             type: 'post',
-            url: "modul/mod_trkasir/hapusdetail_trkasir.php",
+            url: "modul/mod_dropping/hapusdetail_trkasir.php",
             data: {
                 id_dtrkasir: id_dtrkasir
             },
@@ -1838,7 +1839,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
         var trdroping = document.getElementById('trdroping').value;
 
         $.ajax({
-            url: 'modul/mod_trkasir/tbl_detail.php',
+            url: 'modul/mod_dropping/tbl_detail.php',
             type: 'post',
             data: {
                 'kd_trkasir': kd_trkasir,
@@ -1855,7 +1856,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
     //auto pelanggan
     $('#nm_pelanggan').typeahead({
         source: function(query, process) {
-            return $.get('modul/mod_trkasir/autopelanggan.php', {
+            return $.get('modul/mod_dropping/autopelanggan.php', {
                 query: query
             }, function(data) {
 
@@ -1875,7 +1876,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
             var nm_pelanggan = $("#nm_pelanggan").val();
             $.ajax({
-                url: 'modul/mod_trkasir/autopelanggan_enter.php',
+                url: 'modul/mod_dropping/autopelanggan_enter.php',
                 type: 'post',
                 data: {
                     'nm_pelanggan': nm_pelanggan
@@ -1902,7 +1903,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
             var kd_brg = $("#kd_barang").val();
             $.ajax({
-                url: 'modul/mod_trkasir/autobarang.php',
+                url: 'modul/mod_dropping/autobarang.php',
                 type: 'post',
                 data: {
                     'kd_brg': kd_brg
@@ -1966,7 +1967,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             $.ajax({
 
                 type: 'post',
-                url: "modul/mod_trkasir/aksi_trkasir.php",
+                url: "modul/mod_dropping/aksi_dropping.php",
                 dataType: 'json',
                 data: {
                     'id_trkasir': id_trkasir,
@@ -1990,9 +1991,9 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 success: function(data) {
                     console.log(data);
                     if (data.message == 'success') {
-                        window.open('modul/mod_laporan/struk.php?kd_trkasir=' + kd_trkasir, 'nama window', 'width=400,height=700,toolbar=no,location=no,directories=no,status=no,menubar=no, scrollbars=no,resizable=yes,copyhistory=no');
+                        window.open('modul/mod_laporan/faktur.php?kd_trkasir=' + kd_trkasir, 'nama window', 'width=500,height=600,toolbar=no,location=no,directories=no,status=no,menubar=no, scrollbars=no,resizable=yes,copyhistory=no');
                         alert('Proses berhasil !');
-                        window.location = 'media_admin.php?module=trkasir';
+                        window.location = 'media_admin.php?module=dropping';
 
                     } else if (data.message == 'droping') {
                         alert('Proses berhasil !');
