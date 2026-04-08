@@ -23,13 +23,18 @@ $sinkronisasi = "
         FROM trkasir_detail
         GROUP BY kd_barang
     ) jual ON jual.kd_barang = b.kd_barang
-    SET b.stok_barang = (COALESCE(beli.totalbeli, 0) - COALESCE(jual.totaljual, 0))
-    WHERE b.stok_barang <> (COALESCE(beli.totalbeli, 0) - COALESCE(jual.totaljual, 0))
+    LEFT JOIN (
+        SELECT kd_barang, SUM(qty_dtrkasir) AS totaldroping
+        FROM dropping_detail
+        GROUP BY kd_barang
+    ) dropbarang ON dropbarang.kd_barang = b.kd_barang
+    SET b.stok_barang = (COALESCE(beli.totalbeli, 0) - (COALESCE(jual.totaljual, 0) + COALESCE(dropbarang.totaldroping,0)))
+    WHERE b.stok_barang <> (COALESCE(beli.totalbeli, 0) - (COALESCE(jual.totaljual, 0) + COALESCE(dropbarang.totaldroping,0)))
        OR b.stok_barang IS NULL
 ";
 
 mysqli_query($GLOBALS["___mysqli_ston"], $sinkronisasi);
-        header('location:../../media_admin.php?module=trkasir');
+header('location:../../media_admin.php?module=trkasir');
     
 }
 ?>

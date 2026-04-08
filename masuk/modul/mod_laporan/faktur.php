@@ -77,7 +77,7 @@ else {
     $pdf->ln(0.1);
     $pdf->SetX(3.5);
     $pdf->SetFont('Arial', 'b', 10);
-    $pdf->Cell(8, 0.1, 'SIA : '.$rh['lima'], 0, 0, 'L');
+    $pdf->Cell(8, 0.1, $rh['lima'], 0, 0, 'L');
 
 
     $pdf->ln(0.3);
@@ -105,26 +105,26 @@ else {
     $pdf->SetFont('Arial', '', 9);
     $pdf->Cell(10, 0.1, '', 0, 0, 'L');
     $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(2, 0.2, 'No. Faktur', 0, 0, 'L');
+    $pdf->Cell(2, 0.2, 'No. Dropping', 0, 0, 'L');
     $pdf->Cell(0.3, 0.2, ':', 0, 0, 'R');
     $pdf->Cell(6, 0.2, $no_faktur, 0, 1, 'L');
 
     $pdf->ln(0.2);
     $pdf->SetX(0.6);
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(4, 0.1, "Surat Dropping Barang", 0, 0, 'L');
     $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(4, 0.1, "Pembayaran Non Tunai", 0, 0, 'L');
-    $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(0.3, 0.1, ":", 0, 0, 'L');
+    $pdf->Cell(0.3, 0.1, '', 0, 0, 'L');
     $pdf->SetFont('Arial', '', 9);
     $pdf->Cell(10, 0.1, '', 0, 0, 'L');
-    $pdf->Cell(2, 0.2, 'Tgl Faktur', 0, 0, 'L');
+    $pdf->Cell(2, 0.2, 'Tgl Dropping', 0, 0, 'L');
     $pdf->Cell(0.3, 0.2, ':', 0, 0, 'R');
     $pdf->Cell(6, 0.2, tgl_indo($r1['tgl_trkasir']), 0, 1, 'L');
 
     $pdf->ln(0.2);
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(4, 0.1, 'Transfer ke ________ Rek an Heru Choirudin', 0, 0, 'L');
+    $pdf->Cell(4, 0.1, '', 0, 0, 'L');
     $pdf->SetFont('Arial', '', 9);
     $pdf->Cell(0.3, 0.1, '', 0, 0, 'L');
     $pdf->Cell(10, 0.1, '', 0, 0, 'L');
@@ -251,8 +251,7 @@ else {
         $pdf->Cell(8, 0.4, implode(' ', array_slice($terbilangLines, 1)) . ' Rupiah.', 0, 0, 'L');
 
         $pdf->SetFont('Arial', '', 9);
-        $pdf->Cell(9, 0.4, 'Diskon Transaksi : ', 0, 0, 'R');
-        $pdf->Cell(3, 0.4, format_rupiah($diskonfaktur), 0, 1, 'R');
+        
 
     } else {
         $pdf->SetX(0.6);
@@ -260,8 +259,7 @@ else {
         $pdf->Cell(8, 0.4, $terbilangText . ' Rupiah.', 0, 0, 'L');
 
         $pdf->SetFont('Arial', '', 9);
-        $pdf->Cell(9, 0.4, 'Diskon Transaksi : ', 0, 0, 'R');
-        $pdf->Cell(3, 0.4, format_rupiah($diskonfaktur), 0, 1, 'R');
+        
 
     }
 
@@ -274,8 +272,7 @@ else {
 
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', 'B', 9);
-    $pdf->Cell(17, 0.4, 'Total Setelah Diskon : ', 0, 0, 'R');
-    $pdf->Cell(3, 0.4, format_rupiah($r1['ttl_trkasir']), 0, 1, 'R');
+    
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', 'B', 9);
     $pdf->Cell(17, 0.4, '', 0, 0, 'R');
@@ -291,7 +288,7 @@ else {
     $pdf->ln(0.4);
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(2, 0.4, 'Pembayaran', 'L', 0, 'L');
+    $pdf->Cell(2, 0.4, 'Transaksi', 'L', 0, 'L');
     $pdf->Cell(0.3, 0.4, ':', 0, 0, 'L');
     $pdf->Cell(2, 0.4, $r1['nm_carabayar'], 0, 0, 'L');
     $pdf->Cell(2, 0.4, '', 0, 0, 'L');
@@ -301,7 +298,7 @@ else {
     $pdf->ln(0.1);
     $pdf->SetX(0.6);
     $pdf->SetFont('Arial', '', 9);
-    $pdf->Cell(2, 0.1, 'Faktur ini sah bila pembayaran telah diterima', 'L', 0, 'L');
+    $pdf->Cell(2, 0.1, 'Surat Dropping perpindahan', 'L', 0, 'L');
     $pdf->Cell(0.3, 0.1, '', 0, 0, 'L');
     $pdf->Cell(7.7, 0.1, '', 'R', 1, 'L');
 

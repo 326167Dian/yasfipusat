@@ -1561,6 +1561,88 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
             </div>
             <?php
+            //ALUR DROPPING BARANG
+            $dropping1 = $_GET['id'];
+            $totaldropping = $db->query("select sum(qty_dtrkasir) as ttl_drop from dropping_detail where kd_barang=$dropping1 ");
+            $ttldrop = $totaldropping->fetch_array();
+            $ttl_drop = isset($ttldrop['ttl_drop']) ? $ttldrop['ttl_drop'] : 0;
+
+            $drop = "SELECT 
+                dropping_detail.*, 
+                dropping.id_trkasir,
+                dropping.kd_trkasir,
+                dropping.kodetx,
+                dropping.nm_pelanggan,
+                dropping.petugas,
+                dropping.tgl_trkasir
+                FROM dropping_detail 
+                JOIN dropping ON (dropping_detail.kd_trkasir = dropping.kd_trkasir)
+                WHERE dropping_detail.kd_barang = $dropping1
+                ORDER BY dropping_detail.id_dtrkasir DESC ";
+            $transfer = mysqli_query($GLOBALS["___mysqli_ston"], $drop);
+            ?>
+            <div class='box box-primary box-solid table-responsive'>
+                <div class='box-header with-border'>
+                    <h3 class='box-title'><?php echo "Riwayat Transfer Barang $w dengan total keluar = $ttl_drop "; ?></h3>
+                    <div class='box-tools pull-right'>
+                        <button class='btn btn-box-tool' data-widget='collapse'><i class='fa fa-minus'></i></button>
+                    </div><!-- /.box-tools -->
+                </div>
+
+                <div class='box-body'>
+                    <table id="example3" class="table table-condensed table-bordered table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; ">id Transaksi</th>
+                                <th style="text-align: center; ">No Transaksi</th>
+                                <th style="text-align: center; ">No Pesanan</th>
+                                <th style="text-align: center; ">Tujuan</th>
+                                <th style="text-align: center; ">Petugas Input</th>
+                                <th style="text-align: center; ">Harga Jual</th>
+                                <th style="text-align: center; ">Tanggal</th>
+                                <th style="text-align: center; ">Waktu</th>
+                                <th style="text-align: center; ">Keluar</th>
+                                <th style="text-align: center; ">No Batch</th>
+                                <th style="text-align: center; ">Exp Date</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            while ($r = mysqli_fetch_array($transfer)) {
+                                $text = $r['kd_trkasir'];
+                                $text1 = substr($text, 10, 2);
+                                $text2 = substr($text, 12, 2);
+                                $text3 = substr($text, 14, 2);
+                                $harga_drop = format_rupiah(round($r['hrgjual_dtrkasir'], 0));
+                                echo "
+                            <tr>
+                                <td align=center>$r[id_dtrkasir]</td>
+                                <td align=center>$text</td>
+                                <td align=center>$r[kodetx]</td>
+                                <td align=center>$r[nm_pelanggan]</td>
+                                <td align=center>$r[petugas]</td>
+                                <td align=center>$harga_drop</td> 
+                                <td align=center>$r[tgl_trkasir]</td> 
+                                <td align=center>$text1.$text2.$text3</td>
+                                <td align=center>$r[qty_dtrkasir]</td>
+                                <td align=center>$r[no_batch]</td>
+                                <td align=center>$r[exp_date]</td>
+                            </tr>";
+                            }
+                            ?>
+                        </tbody>
+
+                    </table>
+
+
+                </div>
+
+            </div>
+<?php
+
+
+            //ALUR BARANG MASUK
              $beli1 = $_GET['id'];
             $totalmasuk = $db->query("select sum(qty_dtrbmasuk) as ttlm from trbmasuk_detail where kd_barang=$beli1 ");
             $ttlmsk = $totalmasuk->fetch_array();

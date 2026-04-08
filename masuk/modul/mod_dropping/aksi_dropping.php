@@ -51,11 +51,15 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 			run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM kartu_stok WHERE kode_transaksi = '$kdTrdroppingTarget'");
 			run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM dropping WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
 			run_query_or_fail_aksi_trkasir($connTarget, "DELETE FROM trbmasuk WHERE kd_trbmasuk = '$kdTrdroppingTarget'");
-
+			
+			$setheader = run_query_or_fail_aksi_trkasir($connSource, "SELECT satu FROM setheader");
+            $head = mysqli_fetch_assoc($setheader);
+            
 			$tglTrbmasuk = !empty($header['tgl_trkasir']) ? $header['tgl_trkasir'] : date('Y-m-d');
 			$petugas = mysqli_real_escape_string($connTarget, isset($header['petugas']) ? $header['petugas'] : '');
 			$nmSupplierRaw = trim(isset($header['nm_pelanggan']) ? $header['nm_pelanggan'] : '') !== '' ? $header['nm_pelanggan'] : 'Dropping Barang';
-			$nmSupplier = mysqli_real_escape_string($connTarget, $nmSupplierRaw);
+// 			$nmSupplier = mysqli_real_escape_string($connTarget, $nmSupplierRaw);
+			$nmSupplier = mysqli_real_escape_string($connTarget, $head['satu']);
 			$tlpSupplier = mysqli_real_escape_string($connTarget, isset($header['tlp_pelanggan']) ? $header['tlp_pelanggan'] : '');
 			$alamatTrbmasuk = mysqli_real_escape_string($connTarget, isset($header['alamat_pelanggan']) ? $header['alamat_pelanggan'] : '');
 			$ketParts = array_filter(array(

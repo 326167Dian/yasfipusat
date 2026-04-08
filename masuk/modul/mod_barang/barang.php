@@ -44,8 +44,8 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 					<br><br>
 
                     <select class="form-control" name="get_cabang" id="get_cabang">
-                        <option value="pusat">Pusat</option>
-                        <option value="cabang">Cabang</option>
+                        <option value="pusat">APOTEK YASFI</option>
+                        <option value="cabang">APOTEK KITA MAKMUR</option>
                     </select>
                     <br>
                     

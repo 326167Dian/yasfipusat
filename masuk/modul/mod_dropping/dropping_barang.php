@@ -171,7 +171,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
                // $tampil_jenisobat = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM jenis_obat ORDER BY idjenis ");
 
-                echo "<small>F1 => Simpan Detail || F2 => Input Jumlah Bayar || F3 => Simpan Transaksi</small>";
+                echo "<small>F1 => Simpan Detail || F3 => Simpan Transaksi</small>";
                 echo "
 		  <div class='box box-primary box-solid table-responsive'>
 				<div class='box-header with-border'>
@@ -228,7 +228,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 											<textarea name='alamat_pelanggan' id='alamat_pelanggan' class='form-control' rows='2'></textarea>
 										</div>
 										
-									<label class='col-sm-4 control-label'>Nama Dokter</label>        		
+									<label class='col-sm-4 control-label'>Catatan</label>        		
 										<div class='col-sm-6'>
 											<textarea name='ket_trkasir' id='ket_trkasir' class='form-control' rows='2'></textarea>
 										</div>
@@ -996,9 +996,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
         var trdroping = document.getElementById('trdroping').value;
         
-        if (parseInt(dp_bayar1x) < parseInt(ttl_trkasir1x)) {
-            alert('Input Nominal Bayar Lebih besar dari harga');
-        } else {
+       
 
             $.ajax({
 
@@ -1050,7 +1048,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
                 //	}
             });
-        }
+        
 
     }
 

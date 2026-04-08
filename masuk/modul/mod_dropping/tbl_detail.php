@@ -136,38 +136,12 @@ color: white;
 							<div class='col-lg-6'>	
 								
 								<div class='text-right'>
-									<label class='col-sm-6 control-label'>SUB TOTAL</label>        		
+									<label class='col-sm-6 control-label'>TOTAL</label>        		
 									 <div class='col-sm-6'>
 										<input type='text' name='ttl_trkasir' id='ttl_trkasir' value='$grandnya' class='form-control input-validation-error' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off'>
 									 </div>
 								</div>
 								
-								<div class='text-right'>
-									<label class='col-sm-6 control-label'>DISKON (% & Nominal)</label>        		
-									 <div class='col-sm-2'>
-										<input type='text' name='diskon' id='diskon' value='' class='form-control'  style='font-size: 18px; color: #000000; font-weight: bold; text-align: right;' autocomplete='off'>
-									 </div>
-									 <div class='col-sm-4'>
-										<input type='text' name='diskon2' id='diskon2' value='' class='form-control'  style='font-size: 18px; color: #000000; font-weight: bold; text-align: right;' autocomplete='off'>
-									 </div>
-								</div>	
-								
-								<div class='text-right'>
-									<label class='col-sm-6 control-label'>JUMLAH BAYAR</label>        		
-									 <div class='col-sm-6'>
-										<div class='btn-group btn-group-justified' role='group' aria-label='...'>
-                                          <div class='btn-group' role='group'>
-                                            <input type='text' name='dp_bayar' id='dp_bayar' value='' class='form-control'  style='font-size: 18px; color: #000000; font-weight: bold; text-align: right;' autocomplete='off'>
-									    
-                                          </div>
-                                          <div class='btn-group' role='group'>
-                                            <button type='button' class='btn btn-primary' id='dp_bayar_enter'>Enter</button>
-                                          </div>
-                                        </div>
-									 </div>	 
-								</div>
-													
-							
 								
 								
 								<div class='text-right'>
@@ -209,12 +183,7 @@ color: white;
 									 </div>
 							  </div>
 								
-								<div class='text-right'>
-									<label class='col-sm-6 control-label'>KEMBALIAN</label>        		
-									 <div class='col-sm-6'>
-										<input type='text' name='sisa_bayar' id='sisa_bayar' class='form-control' style='font-size: 18px; color: #fff; font-weight: bold; text-align: right; background: #000000;' autocomplete='off'>
-									 </div>
-								</div>
+								
 								
 							</div>
 						      
