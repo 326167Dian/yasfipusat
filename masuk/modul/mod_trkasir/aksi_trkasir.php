@@ -31,6 +31,12 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		return $result;
 	}
 
+	function has_kdtk_session_lock_column($conn)
+	{
+		$cek = mysqli_query($conn, "SHOW COLUMNS FROM kdtk LIKE 'session_kasir'");
+		return ($cek && mysqli_num_rows($cek) > 0);
+	}
+
 	function sync_dropping_to_yasfi2($connSource, $connTarget, $kdTrdropping, $kdTrkasir)
 	{
 		$kdTrkasirSource = mysqli_real_escape_string($connSource, $kdTrkasir);
@@ -204,11 +210,23 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
         
         $cariitem = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM trkasir_detail WHERE kd_trkasir = '$_POST[kd_trkasir]'");
         $countItem = mysqli_num_rows($cariitem);
+        $pakaiSessionLock = has_kdtk_session_lock_column($GLOBALS["___mysqli_ston"]);
+        $sessionKasir = session_id();
+        $sessionKasirEsc = mysqli_real_escape_string($GLOBALS["___mysqli_ston"], $sessionKasir);
 
         if($countItem <= 0){
             $data['message'] = 'failed';
 			echo json_encode($data);
         } else {
+			if ($pakaiSessionLock) {
+				$cekOwner = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT id_kdtk FROM kdtk WHERE id_admin='$_SESSION[idadmin]' AND kd_trkasir='$_POST[kd_trkasir]' AND stt_kdtk='ON' AND session_kasir='$sessionKasirEsc' LIMIT 1");
+				if (!$cekOwner || mysqli_num_rows($cekOwner) < 1) {
+					$data['message'] = 'lock_conflict';
+					echo json_encode($data);
+					die();
+				}
+			}
+
     		$insert = mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO trkasir(
     										kd_trkasir,	
     										petugas,
@@ -246,7 +264,11 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
             
             $datetime = date('Y-m-d H:i:s', time());
             mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kartu_stok(kode_transaksi, tgl_sekarang) VALUES('$_POST[kd_trkasir]','$datetime')");
-            mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdtk SET stt_kdtk = 'OFF' WHERE id_admin = '$_SESSION[idadmin]'AND kd_trkasir = '$_POST[kd_trkasir]'");
+			if ($pakaiSessionLock) {
+				mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdtk SET stt_kdtk = 'OFF' WHERE id_admin = '$_SESSION[idadmin]' AND kd_trkasir = '$_POST[kd_trkasir]' AND session_kasir = '$sessionKasirEsc'");
+			} else {
+				mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdtk SET stt_kdtk = 'OFF' WHERE id_admin = '$_SESSION[idadmin]'AND kd_trkasir = '$_POST[kd_trkasir]'");
+			}
     		
     		
     		if ($insert) {
