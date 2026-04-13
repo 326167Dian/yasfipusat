@@ -37,6 +37,66 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 		return ($cek && mysqli_num_rows($cek) > 0);
 	}
 
+	function escape_sql_value_aksi_trkasir($conn, $value)
+	{
+		if ($value === null) {
+			return "NULL";
+		}
+
+		return "'" . mysqli_real_escape_string($conn, (string) $value) . "'";
+	}
+
+	function backup_deleted_detail_to_hist_aksi_trkasir($conn, $detailRow, $deletedById, $deletedByUsername, $deletedByName, $deletedAt)
+	{
+		$cekHistTable = run_query_or_fail_aksi_trkasir($conn, "SHOW TABLES LIKE 'trkasir_detail_hist'");
+		if (mysqli_num_rows($cekHistTable) < 1) {
+			throw new Exception("Tabel trkasir_detail_hist tidak ditemukan");
+		}
+
+		$histColumnsRes = run_query_or_fail_aksi_trkasir($conn, "SHOW COLUMNS FROM trkasir_detail_hist");
+		$histColumns = array();
+		while ($col = mysqli_fetch_assoc($histColumnsRes)) {
+			$histColumns[] = $col['Field'];
+		}
+
+		$insertData = array();
+		foreach ($detailRow as $key => $value) {
+			if (in_array($key, $histColumns, true)) {
+				$insertData[$key] = $value;
+			}
+		}
+
+		if (in_array('deleted_by_id', $histColumns, true)) {
+			$insertData['deleted_by_id'] = $deletedById;
+		}
+		if (in_array('deleted_by_username', $histColumns, true)) {
+			$insertData['deleted_by_username'] = $deletedByUsername;
+		}
+		if (in_array('deleted_by_name', $histColumns, true)) {
+			$insertData['deleted_by_name'] = $deletedByName;
+		}
+		if (in_array('deleted_at', $histColumns, true)) {
+			$insertData['deleted_at'] = $deletedAt;
+		}
+		if (in_array('delete_source', $histColumns, true)) {
+			$insertData['delete_source'] = 'aksi_trkasir.php';
+		}
+
+		if (count($insertData) < 1) {
+			throw new Exception("Tidak ada kolom yang cocok untuk backup ke trkasir_detail_hist");
+		}
+
+		$columns = array();
+		$values = array();
+		foreach ($insertData as $col => $val) {
+			$columns[] = "`$col`";
+			$values[] = escape_sql_value_aksi_trkasir($conn, $val);
+		}
+
+		$sqlInsertHist = "INSERT INTO trkasir_detail_hist (" . implode(',', $columns) . ") VALUES (" . implode(',', $values) . ")";
+		run_query_or_fail_aksi_trkasir($conn, $sqlInsertHist);
+	}
+
 	function sync_dropping_to_yasfi2($connSource, $connTarget, $kdTrdropping, $kdTrkasir)
 	{
 		$kdTrkasirSource = mysqli_real_escape_string($connSource, $kdTrkasir);
@@ -405,6 +465,10 @@ try {
 		} else {
 			$id_trkasir = $_GET['id'];
 			$kd_trdropping = isset($_GET['droping']) ? $_GET['droping'] : '';
+			$deletedById = isset($_SESSION['idadmin']) ? (int) $_SESSION['idadmin'] : null;
+			$deletedByUsername = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+			$deletedByName = isset($_SESSION['namalengkap']) ? $_SESSION['namalengkap'] : '';
+			$deletedAt = date('Y-m-d H:i:s');
 			if ($kd_trdropping != '') {
 				mysqli_begin_transaction($conn2);
 			}
@@ -432,6 +496,8 @@ try {
 					$id_dtrkasir = $r['id_dtrkasir'];
 					$id_barang = $r['id_barang'];
 					$qty_dtrkasir = (float) $r['qty_dtrkasir'];
+
+					backup_deleted_detail_to_hist_aksi_trkasir($conn, $r, $deletedById, $deletedByUsername, $deletedByName, $deletedAt);
 
 					run_query_or_fail_aksi_trkasir($conn, "INSERT INTO trkasir_restore(
 						kd_trkasir, petugas, shift, tgl_trkasir, nm_pelanggan, tlp_pelanggan, alamat_pelanggan,

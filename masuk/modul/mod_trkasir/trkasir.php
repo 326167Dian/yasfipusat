@@ -42,6 +42,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     $lupa = $_SESSION['level'];
                     if ($lupa == 'pemilik') {
                         echo "          <a class='btn  btn-info btn-flat' href='?module=trkasir&act=cari2'>CARI BERDASARKAN NO TRANSAKSI</a>           
+						            <a class='btn  btn-warning btn-flat' href='modul/mod_trkasir/orphan_trkasir_detail.php' target='_blank'>CEK ORPHAN TRKASIR DETAIL</a>
 									        ";
                     }
                     ?>
