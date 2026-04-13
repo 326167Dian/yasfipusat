@@ -28,7 +28,7 @@ color: white;
 								<th style="vertical-align: middle; background-color: #008000; text-align: left; ">Nama Barang</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Qty</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Satuan</th>
-								<th style="vertical-align: middle; background-color: #008000; text-align: center; ">batch</th>
+								<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Batch</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: center; ">Exp</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Harga</th>
 								<th style="vertical-align: middle; background-color: #008000; text-align: right; ">Disc</th>

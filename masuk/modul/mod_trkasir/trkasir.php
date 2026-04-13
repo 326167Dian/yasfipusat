@@ -526,7 +526,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 										        <option value='2'>Grab Health</option>
 										        <option value='3'>Halodoc</option>
 										        <option value='4'>Marketplace</option>
-										        <option value='8'>Mutasi</option>
+										         
 										        
 										    </select>										
 									 </div>	
@@ -726,7 +726,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 										        <option value='2'>Grab Health</option>
 										        <option value='3'>Halodoc</option>
 										        <option value='4'>Marketplace</option>
-										        <option value='8'>Mutasi</option>
+										         
 										        
 										    </select>										
 									 </div>

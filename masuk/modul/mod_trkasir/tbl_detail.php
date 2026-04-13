@@ -183,7 +183,7 @@ color: white;
 										    } else {
 											 if($stt_aksi == "input_trkasir"){
 											 
-												 $tampil=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM carabayar ORDER BY id_carabayar ASC");
+												 $tampil=mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM carabayar WHERE id_carabayar<'4' ORDER BY id_carabayar ASC");
 												 while($rk=mysqli_fetch_array($tampil)){
 												 echo "<option value='$rk[id_carabayar]'>$rk[nm_carabayar]</option>";
 												 }
