@@ -133,6 +133,11 @@ elseif ($_GET['module'] == 'trkasir') {
     include "modul/mod_trkasir/trkasir.php";
 }
 
+// Bagian kontrol user transaksi kasir (kdtk)
+elseif ($_GET['module'] == 'kdtk') {
+    include "modul/mod_kdtk/kdtk.php";
+}
+
 // Bagian lapbarang
 elseif ($_GET['module'] == 'lapbarang') {
     include "modul/mod_lapbarang/lapbarang.php";

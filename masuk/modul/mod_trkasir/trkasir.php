@@ -43,6 +43,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                     if ($lupa == 'pemilik') {
                         echo "          <a class='btn  btn-info btn-flat' href='?module=trkasir&act=cari2'>CARI BERDASARKAN NO TRANSAKSI</a>           
 						            <a class='btn  btn-warning btn-flat' href='modul/mod_trkasir/orphan_trkasir_detail.php' target='_blank'>CEK ORPHAN TRKASIR DETAIL</a>
+						            <a class='btn  btn-primary btn-flat'  href='?module=kdtk' target='_blank'>KONTROL USER</a>
 									        ";
                     }
                     ?>
@@ -427,32 +428,45 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 $hcekkd = mysqli_fetch_array($cekkd);
                 $petugas = $_SESSION['namalengkap'];
 
+                $buatKdTransaksiBaru = function () {
+                    $baseKode = "TKP-" . date('dmyHis');
+                    $kdBaru = $baseKode;
+                    $urutan = 1;
+
+                    while (true) {
+                        $cekKode = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT kd_trkasir FROM kdtk WHERE kd_trkasir='$kdBaru' LIMIT 1");
+                        if ($cekKode && mysqli_num_rows($cekKode) < 1) {
+                            break;
+                        }
+                        $kdBaru = $baseKode . "-" . $urutan;
+                        $urutan++;
+                    }
+
+                    return $kdBaru;
+                };
+
 
                 if ($ketemucekkd > 0) {
                     if ($pakaiSessionLock) {
                         $sessionOwner = isset($hcekkd['session_kasir']) ? $hcekkd['session_kasir'] : '';
                         if ($sessionOwner != '' && $sessionOwner != $sessionKasir) {
-                            echo "<script type='text/javascript'>alert('Transaksi " . $hcekkd['kd_trkasir'] . " sedang dipakai perangkat lain dengan akun yang sama. Selesaikan dari perangkat asal terlebih dahulu.');history.go(-1);</script>";
-                            break;
-                        }
+                            $kdtransaksi = $buatKdTransaksiBaru();
+                            mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdtk(kd_trkasir,id_admin,session_kasir) VALUES('$kdtransaksi','$_SESSION[idadmin]','$sessionKasirEsc')");
+                        } else {
+                            $klaimLock = mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdtk SET session_kasir='$sessionKasirEsc' WHERE id_kdtk='" . $hcekkd['id_kdtk'] . "' AND (session_kasir IS NULL OR session_kasir='' OR session_kasir='$sessionKasirEsc')");
+                            if (!$klaimLock || mysqli_affected_rows($GLOBALS["___mysqli_ston"]) < 1) {
+                                echo "<script type='text/javascript'>alert('Transaksi sedang dikunci perangkat lain. Silakan refresh dan coba lagi.');history.go(-1);</script>";
+                                break;
+                            }
 
-                        $klaimLock = mysqli_query($GLOBALS["___mysqli_ston"], "UPDATE kdtk SET session_kasir='$sessionKasirEsc' WHERE id_kdtk='" . $hcekkd['id_kdtk'] . "' AND (session_kasir IS NULL OR session_kasir='' OR session_kasir='$sessionKasirEsc')");
-                        if (!$klaimLock || mysqli_affected_rows($GLOBALS["___mysqli_ston"]) < 1) {
-                            echo "<script type='text/javascript'>alert('Transaksi sedang dikunci perangkat lain. Silakan refresh dan coba lagi.');history.go(-1);</script>";
-                            break;
+                            $kdtransaksi = $hcekkd['kd_trkasir'];
                         }
+                    } else {
+                        $kdtransaksi = $buatKdTransaksiBaru();
+                        mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdtk(kd_trkasir,id_admin) VALUES('$kdtransaksi','$_SESSION[idadmin]')");
                     }
-
-                    $kdtransaksi = $hcekkd['kd_trkasir'];
                 } else {
-                    $kdunik = date('dmyHis');
-                    $kdtransaksi = "TKP-" . $kdunik;
-                    $cekkd2 = mysqli_query($GLOBALS["___mysqli_ston"], "SELECT * FROM kdtk WHERE kd_trkasir='$kdtransaksi'");
-                    $ketemucekkd2 = mysqli_num_rows($cekkd2);
-                    if ($ketemucekkd2 > 0) {
-                        $kdunik2 = date('dmyHis')+1;
-                        $kdtransaksi = "TKP-" . $kdunik2;
-                    }
+                    $kdtransaksi = $buatKdTransaksiBaru();
                     
                     if ($pakaiSessionLock) {
                         mysqli_query($GLOBALS["___mysqli_ston"], "INSERT INTO kdtk(kd_trkasir,id_admin,session_kasir) VALUES('$kdtransaksi','$_SESSION[idadmin]','$sessionKasirEsc')");
