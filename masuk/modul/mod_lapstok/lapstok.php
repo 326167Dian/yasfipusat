@@ -1510,7 +1510,7 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
                 </div>
 
                 <div class='box-body'>
-                    <table id="example1" class="table table-condensed table-bordered table-striped table-hover">
+                    <table id="lapstokPenjualanTable" class="table table-condensed table-bordered table-striped table-hover">
                         <thead>
                             <tr>
                                 <th style="text-align: center; ">No Transaksi</th>
@@ -1723,6 +1723,16 @@ if (empty($_SESSION['username']) and empty($_SESSION['passuser'])) {
 
             </div>
         <input style="text-align:center;" class='btn btn-success' type='button' value=KEMBALI onclick=self.history.back()>
+        <script>
+            $(function() {
+                $('#lapstokPenjualanTable').DataTable({
+                    order: [
+                        [5, 'desc'],
+                        [6, 'desc']
+                    ]
+                });
+            });
+        </script>
 <?php
 
 
